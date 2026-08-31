@@ -1,0 +1,68 @@
+server:
+  port: 8001
+spring:
+  application:
+    name: short-link
+  cloud:
+    compatibility-verifier:
+      enabled: false
+  datasource:
+    driver-class-name: org.apache.shardingsphere.driver.ShardingSphereDriver
+    url: jdbc:shardingsphere:classpath:sharding.yaml
+  jpa:
+    database-platform: org.hibernate.dialect.MySQLDialect
+    hibernate:
+      ddl-auto: none
+    show-sql: true
+    properties:
+      hibernate:
+        jdbc:
+          batch_size: 20
+        order_inserts: true
+        order_updates: true
+  transaction:
+    default-timeout: 30
+    rollback-on-commit-failure: true
+shortlink:
+  cache:
+    stream:
+      enabled: true                   # 启用本地缓存Stream同步
+      consumer-timeout: 2000          # 消费者超时时间（毫秒）
+      batch-size: 10                  # 批量处理大小
+      retry-interval: 1000            # 重试间隔（毫秒）
+      max-retries: 3                  # 最大重试次数
+      cleanup-interval: 300000
+  cluster:
+    enable-read-write-split: false
+    connection-timeout: 20000
+    socket-timeout: 20000
+  # 任务调度器线程池配置
+  scheduler:
+    threadpool:
+      poolSize: 8                                    # 调度器线程池大小
+      threadNamePrefix: scheduler-                   # 线程名称前缀
+      awaitTerminationSeconds: 30                    # 等待任务完成的超时时间
+      waitForTasksToCompleteOnShutdown: true         # 关闭时等待任务完成
+  bloom:
+    expected-insertions: 10000000
+    false-probability: 0.01
+    stream:
+      enabled: true
+      consumer-timeout: 2000
+      batch-size: 10
+    local:
+      prewarm:
+        fixed-rate-ms: 300000   # 本地时间片预热任务周期（毫秒），默认5分钟
+    # 时间分片配置
+    time-slice:
+      hours: 6              # 时间分片粒度（6小时）
+      # 本地布隆过滤器保留2天数据（2天 = 48小时 / 6小时 = 8个时间片）
+      local-keep-count: 8   # 本地保留8个时间片（2天数据）
+      # Redis布隆过滤器保留8天数据（8天 = 192小时 / 6小时 = 32个时间片）
+      redis-keep-count: 32  # Redis保留32个时间片（8天数据）
+  code:
+    strategy: DISTRIBUTED_ID    #短链生成策略
+    length: 10        #短链长度
+    max-retries: 3    #最大重试次数
+  machine-id: 1
+
