@@ -294,13 +294,6 @@
             <artifactId>dynamic-datasource-spring-boot-starter</artifactId>
             <version>4.2.0</version>
         </dependency>
-
-        <!-- swagger相关 -->
-        <dependency>
-            <groupId>org.springdoc</groupId>
-            <artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
-            <version>3.0.3</version> <!-- 或最新稳定版 -->
-        </dependency>
     </dependencies>
 
     <!-- ==================== 阿里云Maven中央仓库配置 ==================== -->

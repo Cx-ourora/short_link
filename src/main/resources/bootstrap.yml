@@ -1,0 +1,17 @@
+spring:
+  cloud:
+    nacos:
+      config:
+        server-addr: 192.168.1.103:8848
+        namespace: short-link
+        username: nacos
+        password: nacos
+        file-extension: yaml
+        group: DEFAULT_GROUP
+        refresh-enabled: true
+      discovery:
+        server-addr: 192.168.1.103:8848
+        namespace: short-link
+        username: nacos
+        password: nacos
+        group: DEFAULT_GROUP

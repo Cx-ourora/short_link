@@ -1,6 +1,5 @@
 package org.example.short_link.dto;
 
-import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
@@ -21,7 +20,6 @@ public class CreateShortUrlRequest {
     @Max(value = 7, message = "过期天数最多为7天")
     private Integer expireDays;
 
-    @Schema(description = "创建者")
     private String creator;
 
     private String customCode;

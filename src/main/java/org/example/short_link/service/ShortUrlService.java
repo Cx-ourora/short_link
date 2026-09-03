@@ -101,7 +101,7 @@ public class ShortUrlService {
             // 根据shortCode计算精确的分片位置
             int v = initialShortCode.hashCode() & 0x7fffffff;
             int tableIndex = v % NEW_SHARDING_TABLE_COUNT;
-            int dbIndex = (v / NEW_SHARDING_TABLE_COUNT) % NEW_SHARDING_DATABASE_COUNT;
+            int dbIndex = (v >> 8) % NEW_SHARDING_DATABASE_COUNT;
 
             ShortUrlMapping mapping = shortUrlDao.preCheckByShortCode(dbIndex, tableIndex, initialShortCode, primaryUrlHash, request.getOriginUrl())
                     .orElse(null);
@@ -165,7 +165,7 @@ public class ShortUrlService {
 
                         int v2 = currentShortCode.hashCode() & 0x7fffffff;
                         int tableIndex2 = v2 % NEW_SHARDING_TABLE_COUNT;
-                        int dbIndex2 = (v2 / NEW_SHARDING_TABLE_COUNT) % NEW_SHARDING_DATABASE_COUNT;
+                        int dbIndex2 = (v2 >> 8) % NEW_SHARDING_DATABASE_COUNT;
                         shortUrlMapping = shortUrlDao.save(shortUrlMapping, dbIndex2, tableIndex2);
 
                         entityManager.flush();

@@ -2,6 +2,7 @@ package org.example.short_link.service;
 
 import jakarta.annotation.PostConstruct;
 import jakarta.annotation.PreDestroy;
+import jakarta.annotation.Resource;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.example.short_link.entity.ShortUrlMapping;
@@ -31,6 +32,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 @Service
 public class LocalCacheStreamService implements ApplicationContextAware {
 
+    @Resource
     private final RedisTemplate<String, Object> redisTemplate;
     private ApplicationContext applicationContext;
 
