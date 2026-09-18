@@ -1,0 +1,58 @@
+global:
+  smtp_smarthost: 'smtp.163.com:465'
+  smtp_from: '你自己的邮箱'
+  smtp_auth_username: '你自己的邮箱'
+  smtp_auth_password: '你自己的邮件临时密码'
+  smtp_require_tls: false
+
+templates:
+  - '*.tmpl'
+
+route:
+  group_by: ['alertname', 'instance']
+  group_wait: 10s
+  group_interval: 10s
+  repeat_interval: 1h
+  receiver: 'multi-notifications'
+  routes:
+    # 严重告警同时发送邮件和钉钉
+    - match:
+        severity: critical
+      receiver: 'critical-notifications'
+    # 普通告警只发钉钉
+    - match:
+        severity: warning
+      receiver: 'dingtalk-notifications'
+
+receivers:
+  # 多渠道通知（邮件+钉钉）
+  - name: 'multi-notifications'
+    email_configs:
+      - to: '监控人的邮箱'
+        headers:
+          Subject: '{{ template "email.subject" . }}'
+        html: '{{ template "email.html" . }}'
+    webhook_configs:
+      - url: 'http://localhost:8001/webhook/dingtalk/alert'
+        send_resolved: true
+        http_config:
+          basic_auth:
+            username: 'alert'
+            password: 'webhook123'
+
+  # 严重告警通知
+  - name: 'critical-notifications'
+    email_configs:
+      - to: '监控人的邮箱'
+        headers:
+          Subject: '🚨 CRITICAL: {{ template "email.subject" . }}'
+        html: '{{ template "email.html" . }}'
+    webhook_configs:
+      - url: 'http://localhost:8001/webhook/dingtalk/alert'
+        send_resolved: true
+
+  # 钉钉通知
+  - name: 'dingtalk-notifications'
+    webhook_configs:
+      - url: 'http://localhost:8001/webhook/dingtalk/alert'
+        send_resolved: true

@@ -1,0 +1,49 @@
+{{ define "email.subject" }}
+[{{ .Status | toUpper }}] {{ if eq .Status "firing" }}🚨{{ else }}✅{{ end }} {{ .GroupLabels.alertname }} - {{ if .GroupLabels.instance }}{{ .GroupLabels.instance }}{{ else }}Unknown{{ end }}
+{{ end }}
+
+{{ define "email.html" }}
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>告警通知</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        .alert-header { background-color: {{ if eq .Status "firing" }}#d32f2f{{ else }}#388e3c{{ end }}; color: white; padding: 15px; border-radius: 5px; }
+        .alert-content { margin: 20px 0; }
+        .alert-item { background-color: #f5f5f5; padding: 10px; margin: 10px 0; border-radius: 3px; }
+        .label { font-weight: bold; color: #333; }
+    </style>
+</head>
+<body>
+    <div class="alert-header">
+        <h2>{{ if eq .Status "firing" }}🚨 告警触发{{ else }}✅ 告警恢复{{ end }}</h2>
+        <p>系统: 短链服务监控系统</p>
+        <p>时间: {{ if .CommonAnnotations.timestamp }}{{ .CommonAnnotations.timestamp }}{{ else }}{{ now.Format "2006-01-02 15:04:05" }}{{ end }}</p>
+    </div>
+
+    <div class="alert-content">
+        {{ range .Alerts }}
+        <div class="alert-item">
+            <p><span class="label">告警名称:</span> {{ if .Annotations.summary }}{{ .Annotations.summary }}{{ else }}{{ .Labels.alertname }}{{ end }}</p>
+            <p><span class="label">告警详情:</span> {{ .Annotations.description }}</p>
+            <p><span class="label">告警级别:</span> {{ if .Labels.severity }}{{ .Labels.severity }}{{ else }}unknown{{ end }}</p>
+            <p><span class="label">实例:</span> {{ if .Labels.instance }}{{ .Labels.instance }}{{ else }}unknown{{ end }}</p>
+            <p><span class="label">开始时间:</span> {{ .StartsAt.Format "2006-01-02 15:04:05" }}</p>
+            {{ if .EndsAt }}<p><span class="label">结束时间:</span> {{ .EndsAt.Format "2006-01-02 15:04:05" }}</p>{{ end }}
+        </div>
+        {{ end }}
+    </div>
+
+    <div style="margin-top: 30px; padding: 15px; background-color: #e3f2fd; border-radius: 5px;">
+        <p><strong>处理建议:</strong></p>
+        <ul>
+            <li>立即检查相关服务状态</li>
+            <li>查看监控面板: <a href="http://localhost:3000">Grafana Dashboard</a></li>
+            <li>查看告警详情: <a href="http://localhost:9093">AlertManager</a></li>
+        </ul>
+    </div>
+</body>
+</html>
+{{ end }}

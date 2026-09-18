@@ -1,0 +1,72 @@
+groups:
+  - name: short-link-alerts
+    rules:
+      # 应用状态告警
+      - alert: ShortLinkServiceDown
+        expr: up{job="short-link"} == 0
+        for: 30s
+        labels:
+          severity: critical
+        annotations:
+          summary: "短链服务不可用"
+          description: "短链服务已停止运行超过30秒"
+
+      # CPU使用率告警
+      - alert: HighCPUUsage
+        expr: rate(process_cpu_seconds_total[5m]) * 100 > 80
+        for: 2m
+        labels:
+          severity: warning
+        annotations:
+          summary: "CPU使用率过高"
+          description: "CPU使用率超过80%，当前值: {{ $value }}%"
+
+      # 内存使用率告警
+      - alert: HighMemoryUsage
+        expr: (jvm_memory_used_bytes{area="heap"} / jvm_memory_max_bytes{area="heap"}) * 100 > 85
+        for: 2m
+        labels:
+          severity: warning
+        annotations:
+          summary: "JVM堆内存使用率过高"
+          description: "JVM堆内存使用率超过85%，当前值: {{ $value }}%"
+
+      # 响应时间告警
+      - alert: HighResponseTime
+        expr: histogram_quantile(0.95, rate(http_server_requests_seconds_bucket[5m])) * 1000 > 1000
+        for: 2m
+        labels:
+          severity: warning
+        annotations:
+          summary: "HTTP响应时间过长"
+          description: "95%的请求响应时间超过1秒，当前P95: {{ $value }}ms"
+
+      # QPS异常告警
+      - alert: LowQPS
+        expr: rate(shortlink_create_total[5m]) < 0.1
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: "短链创建QPS异常低"
+          description: "短链创建QPS低于0.1/s，当前值: {{ $value }}"
+
+      # 数据库连接池告警
+      - alert: DatabaseConnectionPoolHigh
+        expr: (hikaricp_connections_active / hikaricp_connections_max) * 100 > 80
+        for: 2m
+        labels:
+          severity: warning
+        annotations:
+          summary: "数据库连接池使用率过高"
+          description: "数据库连接池使用率超过80%，当前值: {{ $value }}%"
+
+      # GC频率告警
+      - alert: HighGCFrequency
+        expr: rate(jvm_gc_collection_seconds_count[5m]) > 5
+        for: 2m
+        labels:
+          severity: warning
+        annotations:
+          summary: "GC频率过高"
+          description: "GC频率超过5次/秒，当前值: {{ $value }}/s"
