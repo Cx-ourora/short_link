@@ -295,4 +295,21 @@ public class RedisTimeBasedBloomFilterService {
         }
     }
 
+    /**
+     * 获取本地布隆过滤器统计信息
+     * @return
+     */
+    public String getLocalStats() {
+        return localBloomFilterService.getLocalStats();
+    }
+
+    /**
+     * 获取Redis时间分片统计信息
+     * 输出: 统计字符串（活跃片数/当前片/保留策略）
+     */
+    public String getRedisStats() {
+        return String.format("Redis时间分片统计 - 活跃片数: %d, 当前片: %s, 保留策略: %d天",
+                redisTimeSlices.size(), currentTimeSlice,
+                (timeSliceHours * redisKeepSliceCount) / 24);
+    }
 }
