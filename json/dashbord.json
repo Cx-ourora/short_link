@@ -1,4 +1,4 @@
-{
+﻿{
   "annotations": {
     "list": [
       {
@@ -24,7 +24,7 @@
     {
       "datasource": {
         "type": "prometheus",
-        "uid": "fet6hydoii2o0b"
+        "uid": "afy87g14h7t34c"
       },
       "fieldConfig": {
         "defaults": {
@@ -106,7 +106,7 @@
     {
       "datasource": {
         "type": "prometheus",
-        "uid": "fet6hydoii2o0b"
+        "uid": "afy87g14h7t34c"
       },
       "fieldConfig": {
         "defaults": {
@@ -164,7 +164,7 @@
     {
       "datasource": {
         "type": "prometheus",
-        "uid": "fet6hydoii2o0b"
+        "uid": "afy87g14h7t34c"
       },
       "fieldConfig": {
         "defaults": {
@@ -222,7 +222,7 @@
     {
       "datasource": {
         "type": "prometheus",
-        "uid": "fet6hydoii2o0b"
+        "uid": "afy87g14h7t34c"
       },
       "fieldConfig": {
         "defaults": {
@@ -290,7 +290,7 @@
     {
       "datasource": {
         "type": "prometheus",
-        "uid": "fet6hydoii2o0b"
+        "uid": "afy87g14h7t34c"
       },
       "fieldConfig": {
         "defaults": {
@@ -356,7 +356,7 @@
     {
       "datasource": {
         "type": "prometheus",
-        "uid": "fet6hydoii2o0b"
+        "uid": "afy87g14h7t34c"
       },
       "fieldConfig": {
         "defaults": {
@@ -422,7 +422,7 @@
     {
       "datasource": {
         "type": "prometheus",
-        "uid": "fet6hydoii2o0b"
+        "uid": "afy87g14h7t34c"
       },
       "fieldConfig": {
         "defaults": {
@@ -524,7 +524,7 @@
     {
       "datasource": {
         "type": "prometheus",
-        "uid": "fet6hydoii2o0b"
+        "uid": "afy87g14h7t34c"
       },
       "fieldConfig": {
         "defaults": {
@@ -626,7 +626,7 @@
     {
       "datasource": {
         "type": "prometheus",
-        "uid": "fet6hydoii2o0b"
+        "uid": "afy87g14h7t34c"
       },
       "fieldConfig": {
         "defaults": {
@@ -723,7 +723,7 @@
     {
       "datasource": {
         "type": "prometheus",
-        "uid": "fet6hydoii2o0b"
+        "uid": "afy87g14h7t34c"
       },
       "fieldConfig": {
         "defaults": {
@@ -825,7 +825,7 @@
     {
       "datasource": {
         "type": "prometheus",
-        "uid": "fet6hydoii2o0b"
+        "uid": "afy87g14h7t34c"
       },
       "fieldConfig": {
         "defaults": {
@@ -927,7 +927,7 @@
     {
       "datasource": {
         "type": "prometheus",
-        "uid": "fet6hydoii2o0b"
+        "uid": "afy87g14h7t34c"
       },
       "fieldConfig": {
         "defaults": {
@@ -1008,7 +1008,7 @@
       "pluginVersion": "12.1.0-16509090662",
       "targets": [
         {
-          "expr": "rate(jvm_gc_collection_seconds_count[5m])",
+          "expr": "rate(jvm_gc_pause_seconds_count[5m])",
           "legendFormat": "GC次数/秒 - {{gc}}",
           "refId": "A"
         }

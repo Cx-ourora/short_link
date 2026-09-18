@@ -15,7 +15,4 @@ $utf8NoBom = New-Object System.Text.UTF8Encoding($false)
 Write-Host "✅ wrapped.json 已生成"
 
 使用curl.exe导入
-curl.exe -X POST http://localhost:3000/api/dashboards/db ^
--H "Content-Type: application/json; charset=utf-8" ^
--H "Authorization: Bearer glsa_你的令牌" ^
---data-binary "@D:\tools\grafana-13.2.1\wrapped.json"
+curl.exe -X POST http://localhost:3000/api/dashboards/db -H "Content-Type: application/json; charset=utf-8" -H "Authorization: Bearer <GRAFANA_SERVICE_ACCOUNT_TOKEN>" --data-binary "@D:\tools\grafana-13.2.1\wrapped.json"

@@ -136,8 +136,10 @@ management:
   metrics:
     distribution:
       percentiles-histogram:
-        # 禁用 Spring Boot 自动为 HTTP 请求生成的百分位数直方图
-        http.server.requests: false
+        # 开启 HTTP 请求直方图，Grafana histogram_quantile 才能算 P50/P95/P99
+        http.server.requests: true
+      percentiles:
+        http.server.requests: 0.5,0.9,0.99
 prometheus:
   server:
     # Prometheus地址
