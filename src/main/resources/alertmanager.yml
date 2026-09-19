@@ -1,12 +1,12 @@
 global:
   smtp_smarthost: 'smtp.163.com:465'
-  smtp_from: '你自己的邮箱'
-  smtp_auth_username: '你自己的邮箱'
-  smtp_auth_password: '你自己的邮件临时密码'
+  smtp_from: 'a15318098325@163.com'
+  smtp_auth_username: 'a15318098325@163.com'
+  smtp_auth_password: '授权码'
   smtp_require_tls: false
 
 templates:
-  - '*.tmpl'
+  - 'D:/tools/alertmanager-0.33.1.windows-amd64/email.tmpl'
 
 route:
   group_by: ['alertname', 'instance']
@@ -28,12 +28,12 @@ receivers:
   # 多渠道通知（邮件+钉钉）
   - name: 'multi-notifications'
     email_configs:
-      - to: '监控人的邮箱'
+      - to: 'a15318098325@163.com'
         headers:
           Subject: '{{ template "email.subject" . }}'
         html: '{{ template "email.html" . }}'
     webhook_configs:
-      - url: 'http://localhost:8001/webhook/dingtalk/alert'
+      - url: 'http://127.0.0.1:8060/dingtalk/webhook1/send'
         send_resolved: true
         http_config:
           basic_auth:
@@ -43,16 +43,16 @@ receivers:
   # 严重告警通知
   - name: 'critical-notifications'
     email_configs:
-      - to: '监控人的邮箱'
+      - to: 'a15318098325@163.com'
         headers:
           Subject: '🚨 CRITICAL: {{ template "email.subject" . }}'
         html: '{{ template "email.html" . }}'
     webhook_configs:
-      - url: 'http://localhost:8001/webhook/dingtalk/alert'
+      - url: 'http://127.0.0.1:8060/dingtalk/webhook1/send'
         send_resolved: true
 
   # 钉钉通知
   - name: 'dingtalk-notifications'
     webhook_configs:
-      - url: 'http://localhost:8001/webhook/dingtalk/alert'
+      - url: 'http://127.0.0.1:8060/dingtalk/webhook1/send'
         send_resolved: true
