@@ -17,6 +17,7 @@ import org.example.short_link.dto.CreateShortUrlResponse;
 import org.example.short_link.util.DigestUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.support.TransactionTemplate;
 
 import java.time.LocalDateTime;
@@ -349,6 +350,47 @@ public class ShortUrlService {
             return v % NEW_SHARDING_TABLE_COUNT;
         }
         return v % CommonConstants.SHARDING_TABLE_COUNT;
+    }
+
+    /**
+     * 异步更新访问次数（支持分库分表和Redis集群分片）
+     */
+    @SentinelResource(value = "updateAccessCount")
+    public void updateAccessCountAsync(String shortCode) {
+        try {
+            // 先尝试从Redis集群增加计数
+            Long count = clusterAwareCacheService.incrementAccessCount(shortCode);
+
+            // 异步更新数据库（可以考虑批量更新）
+            if (count != null && count % 100 == 0) {
+                // 每100次访问同步一次数据库（ShardingSphere会自动路由）
+                updateAccessCountInDatabase(shortCode, count);
+            }
+        } catch (Exception e) {
+            // 访问计数失败不影响主流程
+            log.warn("更新访问次数失败: shortCode={}, error={}", shortCode, e.getMessage());
+        }
+    }
+
+    /**
+     * 数据库访问次数更新（支持分库分表）
+     */
+    @Transactional(rollbackFor = Exception.class)
+    public void updateAccessCountInDatabase(String shortCode, Long accessCount) {
+        try {
+            int updated = shortUrlDao.updateAccessCount(shortCode, accessCount);
+            if (updated > 0) {
+                log.debug("访问次数更新成功: shortCode={}, accessCount={}, 数据库分片: db={}, table={}",
+                        shortCode, accessCount,
+                        calculateDatabaseIndex(shortCode), calculateTableIndex(shortCode));
+            } else {
+                log.warn("访问次数更新失败，记录不存在: shortCode={}", shortCode);
+            }
+        } catch (Exception e) {
+            log.error("数据库访问次数更新失败: shortCode={}, accessCount={}, error={}",
+                    shortCode, accessCount, e.getMessage(), e);
+            throw e;
+        }
     }
 
     // ==================== Sentinel 处理方法 ====================

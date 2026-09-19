@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.example.short_link.entity.ShortUrlMapping;
+import org.redisson.api.RAtomicLong;
 import org.redisson.api.RBucket;
 import org.redisson.api.RedissonClient;
 import org.springframework.beans.factory.annotation.Value;
@@ -29,6 +30,7 @@ public class ClusterAwareCacheService {
     // 缓存过期时间
     private static final Duration DEFAULT_EXPIRE_TIME = Duration.ofHours(1);
     private static final Duration HOT_DATA_EXPIRE_TIME = Duration.ofHours(24);
+    private static final Duration COUNT_EXPIRE_TIME = Duration.ofDays(7);
 
     // redisson服务service
     private final RedissonClient redissonClient;
@@ -111,6 +113,27 @@ public class ClusterAwareCacheService {
             log.error("Redis集群序列化失败: shortCode={}, error={}", shortCode, e.getMessage());
         } catch (Exception e) {
             log.error("Redis集群缓存失败: shortCode={}, error={}", shortCode, e.getMessage());
+        }
+    }
+
+    /**
+     * 增加访问计数（集群分片优化）
+     */
+    public Long incrementAccessCount(String shortCode) {
+        try {
+            String key = generateHashTagKey(COUNT_CACHE_KEY, shortCode);
+            RAtomicLong atomicLong = redissonClient.getAtomicLong(key);
+
+            long count = atomicLong.incrementAndGet();
+            atomicLong.expire(COUNT_EXPIRE_TIME);
+
+            log.debug("访问计数增加: {}, 当前计数: {}, 分片槽位: {}",
+                    shortCode, count, shardingStrategyService.calculateSlot(key));
+
+            return count;
+        } catch (Exception e) {
+            log.error("增加访问计数失败: shortCode={}, error={}", shortCode, e.getMessage());
+            return null;
         }
     }
 

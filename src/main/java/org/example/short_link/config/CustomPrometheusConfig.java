@@ -28,7 +28,7 @@ public class CustomPrometheusConfig {
     }
 
     // -------------- 自定义业务指标 ---------------------------------
-    @Bean
+    @Bean("shortLinkCreateCounter")
     public Counter shortLinkCreateCounter(MeterRegistry meterRegistry) {
         // Micrometer 导出 Prometheus 时会自动给 Counter 追加 _total 后缀
         // 所以注册名不要带 _total，否则最终指标名变成 shortlink_create_total_total
@@ -37,7 +37,7 @@ public class CustomPrometheusConfig {
                 .register(meterRegistry);
     }
 
-    @Bean
+    @Bean("shortLinkAccessCounter")
     public Counter shortLinkAccessCounter(MeterRegistry meterRegistry) {
         return Counter.builder("shortlink_access")
                 .description("短链访问总数")

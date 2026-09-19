@@ -16,3 +16,9 @@ Write-Host "✅ wrapped.json 已生成"
 
 使用curl.exe导入
 curl.exe -X POST http://localhost:3000/api/dashboards/db -H "Content-Type: application/json; charset=utf-8" -H "Authorization: Bearer <GRAFANA_SERVICE_ACCOUNT_TOKEN>" --data-binary "@D:\tools\grafana-13.2.1\wrapped.json"
+
+
+接入Alertmanager，prometheus-webhook-dingtalk，prometheus和Grafana过程
+prometheus配置对应服务位置，接入Alertmanager位置，以及告警规则yml文件
+Grafana配置数据源为prometheus，配置相应json文件获取监控大屏数据
+接入Alertmanager，配置短信模板，修改配置文件，接入对应邮箱地址以及prometheus-webhook-dingtalk
